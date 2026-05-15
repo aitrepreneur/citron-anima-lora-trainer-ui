@@ -24,22 +24,25 @@ LOGS_DIR = ROOT / "logs"
 MODELS_DIR = ROOT / "models" / "anima"
 SD_SCRIPTS_DIR = ROOT / "sd-scripts"
 
-DIT_MODEL = MODELS_DIR / "dit" / "anima-preview.safetensors"
+DIT_MODEL = MODELS_DIR / "dit" / "anima-base-v1.0.safetensors"
 QWEN3_MODEL = MODELS_DIR / "text_encoder" / "qwen_3_06b_base.safetensors"
 VAE_MODEL = MODELS_DIR / "vae" / "qwen_image_vae.safetensors"
 TRAIN_SCRIPT = SD_SCRIPTS_DIR / "anima_train_network.py"
 
 BASE_MODEL_URLS = {
     "anima-preview": "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/diffusion_models/anima-preview.safetensors",
+    "anima-preview2": "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/diffusion_models/anima-preview2.safetensors",
     "anima-preview3-base": "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/diffusion_models/anima-preview3-base.safetensors",
+    "anima-base-v1.0": "https://huggingface.co/circlestone-labs/Anima/resolve/main/split_files/diffusion_models/anima-base-v1.0.safetensors",
 }
-
 
 def get_dit_model_path(base_model: str) -> Path:
     """Return the local Path for the selected base model's DiT weights."""
     filenames = {
         "anima-preview": "anima-preview.safetensors",
+        "anima-preview2": "anima-preview2.safetensors",
         "anima-preview3-base": "anima-preview3-base.safetensors",
+        "anima-base-v1.0": "anima-base-v1.0.safetensors",
     }
     return MODELS_DIR / "dit" / filenames.get(base_model, "anima-preview.safetensors")
 
@@ -56,11 +59,11 @@ ACCELERATE_CONFIG = "app_configs/accelerate_gpu.yaml"
 DEFAULTS = {
     # Basic
     "project_name": "my_lora",
-    "base_model": "anima-preview",
+    "base_model": "anima-base-v1.0",
     "image_directory": "",
     "output_directory": "",
-    "network_dim": 20,
-    "network_alpha": 20,
+    "network_dim": 32,
+    "network_alpha": 32,
     "learning_rate": 0.0001,
     "max_train_epochs": 10,
     "resolution": 768,
@@ -675,8 +678,8 @@ def build_ui() -> gr.Blocks:
                     with gr.Row():
                         base_model_dropdown = gr.Dropdown(
                             label="Base Model",
-                            choices=["anima-preview", "anima-preview3-base"],
-                            value=cfg.get("base_model", "anima-preview"),
+                            choices=["anima-preview", "anima-preview2", "anima-preview3-base", "anima-base-v1.0",],
+                            value=cfg.get("base_model", "anima-base-v1.0"),
                             info="Select Base Model (Model will auto download when you click start training. this may take a few minutes but future runs will not need to download.)",
                         )
                     image_directory = gr.Textbox(
